@@ -75,4 +75,9 @@ out/
 
 # Misc
 *.pem
-.vercel 
+.vercel
+
+# MongoDB Memory Server
+.cache/
+**/node_modules/.cache/
+**/node_modules/.cache/mongodb-memory-server/ 

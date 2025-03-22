@@ -1,0 +1,50 @@
+{
+  "name": "Sparq Connection",
+  "short_name": "Sparq",
+  "description": "Build stronger relationships through daily prompts, quizzes, and expert advice",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#673ab7",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Today's Prompt",
+      "short_name": "Prompt",
+      "description": "View today's relationship prompt",
+      "url": "/prompt",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Take a Quiz",
+      "short_name": "Quizzes",
+      "description": "Explore relationship quizzes",
+      "url": "/quizzes",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["lifestyle", "health", "education", "social"],
+  "dir": "ltr",
+  "lang": "en-US",
+  "prefer_related_applications": false
+}
