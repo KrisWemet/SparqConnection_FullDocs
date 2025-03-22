@@ -1,0 +1,148 @@
+import express, { Request, Response } from 'express';
+import { validateAuthToken } from '../middleware/auth';
+import { db } from '../config/firebase';
+
+const router = express.Router();
+
+interface Journey {
+  id: string;
+  title: string;
+  description: string;
+  duration: number;
+  category: string;
+  difficulty: string;
+  content: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Get all journeys
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const querySnapshot = await db.collection('journeys')
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    const journeys = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Journey[];
+
+    res.json(journeys);
+  } catch (error) {
+    console.error('Error fetching journeys:', error);
+    res.status(500).json({ message: 'Error fetching journeys' });
+  }
+});
+
+// Get journey by ID
+router.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const docRef = await db.collection('journeys').doc(id).get();
+
+    if (!docRef.exists) {
+      return res.status(404).json({ message: 'Journey not found' });
+    }
+
+    const journey = {
+      id: docRef.id,
+      ...docRef.data()
+    } as Journey;
+
+    res.json(journey);
+  } catch (error) {
+    console.error('Error fetching journey:', error);
+    res.status(500).json({ message: 'Error fetching journey' });
+  }
+});
+
+// Create new journey
+router.post('/', validateAuthToken, async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.uid;
+    if (!userId || req.user?.role !== 'admin') {
+      return res.status(403).json({ message: 'Only admins can create journeys' });
+    }
+
+    const journeyData = {
+      ...req.body,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: userId
+    };
+
+    const docRef = await db.collection('journeys').add(journeyData);
+    const newJourney = {
+      id: docRef.id,
+      ...journeyData
+    } as Journey;
+
+    res.status(201).json(newJourney);
+  } catch (error) {
+    console.error('Error creating journey:', error);
+    res.status(500).json({ message: 'Error creating journey' });
+  }
+});
+
+// Update journey
+router.put('/:id', validateAuthToken, async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.uid;
+    if (!userId || req.user?.role !== 'admin') {
+      return res.status(403).json({ message: 'Only admins can update journeys' });
+    }
+
+    const { id } = req.params;
+    const docRef = db.collection('journeys').doc(id);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ message: 'Journey not found' });
+    }
+
+    const updateData = {
+      ...req.body,
+      updatedAt: new Date().toISOString()
+    };
+
+    await docRef.update(updateData);
+
+    const updatedDoc = await docRef.get();
+    const updatedJourney = {
+      id: updatedDoc.id,
+      ...updatedDoc.data()
+    } as Journey;
+
+    res.json(updatedJourney);
+  } catch (error) {
+    console.error('Error updating journey:', error);
+    res.status(500).json({ message: 'Error updating journey' });
+  }
+});
+
+// Delete journey
+router.delete('/:id', validateAuthToken, async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.uid;
+    if (!userId || req.user?.role !== 'admin') {
+      return res.status(403).json({ message: 'Only admins can delete journeys' });
+    }
+
+    const { id } = req.params;
+    const docRef = db.collection('journeys').doc(id);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ message: 'Journey not found' });
+    }
+
+    await docRef.delete();
+    res.json({ message: 'Journey deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting journey:', error);
+    res.status(500).json({ message: 'Error deleting journey' });
+  }
+});
+
+export default router; 

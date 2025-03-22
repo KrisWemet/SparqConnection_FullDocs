@@ -1,0 +1,10 @@
+version: "2"
+authtoken: ${NGROK_AUTH_TOKEN}
+tunnels:
+  app:
+    addr: ${LOCAL_BACKEND_PORT}
+    proto: http
+    subdomain: ${NGROK_SUBDOMAIN}
+    region: ${NGROK_REGION}
+    inspect: false # Disable inspection UI for security
+    bind_tls: true # Force HTTPS 
