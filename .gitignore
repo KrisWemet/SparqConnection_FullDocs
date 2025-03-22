@@ -6,6 +6,10 @@ node_modules/
 # testing
 /coverage
 /client/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
 # production
 /build
@@ -41,6 +45,7 @@ yarn-error.log*
 .Trashes
 ehthumbs.db
 Thumbs.db
+*.icloud
 
 # Optional npm cache directory
 .npm
